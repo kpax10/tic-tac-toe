@@ -1,0 +1,19 @@
+body {
+  box-sizing: border-box;
+}
+
+.board {
+  width: 300px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.space {
+  display: grid;
+  place-items: center;
+  height: 100px;
+  width: 100px;
+  border-color: white;
+  background-color: pink;
+}
