@@ -37,38 +37,45 @@ const game = (() => {
       for (let j = 0; j < winConditions[i].length; j++) {
         if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
           // suspend game once player 'X' wins
-          gameOver();
+          gameOver(player1);
+          console.log('x wins');
         }
         if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
           // suspend game once player 'O' wins
-          gameOver();
+          gameOver(player2);
+          console.log('o wins');
         }
       }
     }
     if (isFull) {
       gameOver();
+      console.log('draw');
     }
+
   }
 
   const gameOver = () => {
-    console.log('game over');
-    //disable game from continuing
+    displayController.spaces.forEach(element => {
+      element.removeEventListener('click', displayListener)
+    })
   }
 
   let player = player1;
 
-  displayController.spaces.forEach(element => {
-    element.addEventListener('click', (e) => {
-      // add player marker to gameBoard array based on element's index
-      let index = Array.from(displayController.spaces).indexOf(e.target);
+  const displayListener = (e) => {
+    // add player marker to gameBoard array based on element's index
+    let index = Array.from(displayController.spaces).indexOf(e.target);
 
-      if (gameBoard.board[index] === '') {
-        gameBoard.board[index] = player.marker;
-        player === player1 ? player = player2 : player = player1; // change players
-        displayController.displayMarkers();
-        checkWinStatus(); // load markers
-      } else return
-    })
+    if (gameBoard.board[index] === '') {
+      gameBoard.board[index] = player.marker;
+      player === player1 ? player = player2 : player = player1; // change players
+      displayController.displayMarkers();
+      checkWinStatus(); // load markers
+    } else return
+  }
+
+  displayController.spaces.forEach(element => {
+    element.addEventListener('click', displayListener)
   });
   return { player }
 })()
