@@ -2,14 +2,11 @@
 
 //Rule of thumb: if you only ever need ONE of something (gameBoard, displayController), use a module. If you need multiples of something (players!), create them with factories.
 
-
 const gameBoard = (() => {
   const board = ['', '', '', '', '', '', '', '', ''];
 
   return { board };
 })();
-
-
 
 const displayController = (() => {
   const spaces = document.querySelectorAll('.space');
@@ -20,8 +17,6 @@ const displayController = (() => {
   }
   return { spaces, displayMarkers }
 })();
-
-
 
 const player = (name, marker) => {
   return { name, marker }
@@ -38,12 +33,10 @@ const game = (() => {
     ]
     // if (arr[0] === player.marker)
     // NOT WORKING
-    for (let i = 0; i < winConditions.length - 1; i++) {
+    for (let i = 0; i < winConditions.length; i++) {
       for (let j = 0; j < winConditions[i].length; j++) {
-        if (gameBoard.board[i] === 'X') console.log('win');
-        // if (arr[j] === 'X') {
-        //   console.log("winner");
-        // } else return
+        if (gameBoard.board[i] === 'X' && gameBoard) console.log('win');
+
       }
     }
   }
