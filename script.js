@@ -2,10 +2,20 @@
 
 //Rule of thumb: if you only ever need ONE of something (gameBoard, displayController), use a module. If you need multiples of something (players!), create them with factories.
 
+const player = (name, marker) => {
+  return { name, marker }
+}
+
+const player1 = player('Player 1', 'X');
+const player2 = player('Player 2', 'O');
+
 const gameBoard = (() => {
   const board = ['', '', '', '', '', '', '', '', ''];
   return { board };
 })();
+
+
+
 
 const displayController = (() => {
   const spaces = document.querySelectorAll('.space');
@@ -14,17 +24,20 @@ const displayController = (() => {
       spaces[i].textContent = gameBoard.board[i]
     }
   }
-  return { spaces, displayMarkers }
+
+  const displayPlayerTurn = (player) => {
+    document.querySelector('span').textContent = player.name;
+  }
+  // displayPlayerTurn(player1)
+  return { spaces, displayMarkers, displayPlayerTurn }
 })();
 
-const player = (name, marker) => {
-  return { name, marker }
-}
 
-const player1 = player('player1', 'X');
-const player2 = player('player2', 'O');
+
+
 
 const game = (() => {
+
   const checkWinStatus = () => {
     //loop over board array, if win conditions exist, announce winner
     const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]]
@@ -48,10 +61,9 @@ const game = (() => {
         return console.log('draw');
       }
     }
-
   }
 
-  const gameOver = (player) => {
+  const gameOver = () => {
     console.log(`${player.name} wins!`);
 
     displayController.spaces.forEach(element => {
@@ -70,8 +82,10 @@ const game = (() => {
       displayController.displayMarkers();
       checkWinStatus(); // load markers
       player === player1 ? player = player2 : player = player1; // change players
+      displayController.displayPlayerTurn(player)
     } else return
   }
+
 
   displayController.spaces.forEach(element => {
     element.addEventListener('click', displayListener)
