@@ -30,18 +30,29 @@ const game = (() => {
     //loop over board array, if win conditions exist, announce winner
     const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]]
     const board = gameBoard.board;
+    const isFull = board.every(cell => cell.length === 1)
+
 
     for (let i = 0; i < winConditions.length; i++) {
       for (let j = 0; j < winConditions[i].length; j++) {
         if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
           // suspend game once player 'X' wins
-          console.log('X wins');
+          gameOver();
         }
         if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
-          console.log('O wins');
+          // suspend game once player 'O' wins
+          gameOver();
         }
       }
     }
+    if (isFull) {
+      gameOver();
+    }
+  }
+
+  const gameOver = () => {
+    console.log('game over');
+    //disable game from continuing
   }
 
   let player = player1;
