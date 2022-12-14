@@ -4,7 +4,6 @@
 
 const gameBoard = (() => {
   const board = ['', '', '', '', '', '', '', '', ''];
-
   return { board };
 })();
 
@@ -32,29 +31,29 @@ const game = (() => {
     const board = gameBoard.board;
     const isFull = board.every(cell => cell.length === 1)
 
-
     for (let i = 0; i < winConditions.length; i++) {
-      for (let j = 0; j < winConditions[i].length; j++) {
-        if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
-          // suspend game once player 'X' wins
-          gameOver(player1);
-          console.log('x wins');
-        }
-        if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
-          // suspend game once player 'O' wins
-          gameOver(player2);
-          console.log('o wins');
-        }
+      if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
+        // suspend game once player 'X' wins
+        gameOver(player1);
+        console.log('x wins');
+        return
       }
-    }
-    if (isFull) {
-      gameOver();
-      console.log('draw');
+      if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
+        // suspend game once player 'O' wins
+        gameOver(player2);
+        console.log('o wins');
+        return
+      }
+      if (isFull) {
+        return console.log('draw');
+      }
     }
 
   }
 
-  const gameOver = () => {
+  const gameOver = (player) => {
+    console.log(`${player.name} wins!`);
+
     displayController.spaces.forEach(element => {
       element.removeEventListener('click', displayListener)
     })
@@ -68,9 +67,9 @@ const game = (() => {
 
     if (gameBoard.board[index] === '') {
       gameBoard.board[index] = player.marker;
-      player === player1 ? player = player2 : player = player1; // change players
       displayController.displayMarkers();
       checkWinStatus(); // load markers
+      player === player1 ? player = player2 : player = player1; // change players
     } else return
   }
 
