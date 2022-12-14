@@ -28,15 +28,18 @@ const player2 = player('player2', 'O');
 const game = (() => {
   const checkWinStatus = () => {
     //loop over board array, if win conditions exist, announce winner
-    var winConditions = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]
-    ]
-    // if (arr[0] === player.marker)
-    // NOT WORKING
+    const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]]
+    const board = gameBoard.board;
+
     for (let i = 0; i < winConditions.length; i++) {
       for (let j = 0; j < winConditions[i].length; j++) {
-        if (gameBoard.board[i] === 'X' && gameBoard) console.log('win');
-
+        if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
+          // suspend game once player 'X' wins
+          console.log('X wins');
+        }
+        if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
+          console.log('O wins');
+        }
       }
     }
   }
@@ -58,11 +61,3 @@ const game = (() => {
   });
   return { player }
 })()
-
-
-
-// gameBoard.board[5] = 'x';
-// displayController.displayMarkers();
-// gameBoard.board[6] = 'o';
-// displayController.displayMarkers();
-// console.log(player1.marker);
