@@ -28,7 +28,16 @@ const displayController = (() => {
   const displayPlayerTurn = (player) => {
     document.querySelector('span').textContent = player.name;
   }
-  // displayPlayerTurn(player1)
+
+  const restartButton = document.querySelector('button');
+  restartButton.addEventListener('click', () => {
+    gameBoard.board = ['', '', '', '', '', '', '', '', ''];
+    displayMarkers();
+    spaces.forEach(element => {
+      element.addEventListener('click', game.displayListener)
+    });
+  })
+
   return { spaces, displayMarkers, displayPlayerTurn }
 })();
 
@@ -87,8 +96,9 @@ const game = (() => {
   }
 
 
+
   displayController.spaces.forEach(element => {
     element.addEventListener('click', displayListener)
   });
-  return { player }
+  return { player, displayListener }
 })()
