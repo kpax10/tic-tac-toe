@@ -1,104 +1,116 @@
-'use strict';
-
-//Rule of thumb: if you only ever need ONE of something (gameBoard, displayController), use a module. If you need multiples of something (players!), create them with factories.
-
-const player = (name, marker) => {
+'use strict;'
+// player factory function
+const createPlayer = (name, marker) => {
   return { name, marker }
 }
 
-const player1 = player('Player 1', 'X');
-const player2 = player('Player 2', 'O');
-
+// gameboard
 const gameBoard = (() => {
-  const board = ['', '', '', '', '', '', '', '', ''];
-  return { board };
-})();
 
-
-
-
-const displayController = (() => {
-  const spaces = document.querySelectorAll('.space');
-  const displayMarkers = () => {
-    for (let i = 0; i < spaces.length; i++) {
-      spaces[i].textContent = gameBoard.board[i]
-    }
+  // generate board array
+  let board = [];
+  for (i = 0; i < 9; i++) {
+    board.push('');
   }
 
-  const displayPlayerTurn = (player) => {
-    document.querySelector('span').textContent = player.name;
-  }
+  // display square for each array item
+  let squares = document.querySelector('.squares');
 
-  const restartButton = document.querySelector('button');
-  restartButton.addEventListener('click', () => {
-    gameBoard.board = ['', '', '', '', '', '', '', '', ''];
-    displayMarkers();
-    spaces.forEach(element => {
-      element.addEventListener('click', game.displayListener)
-    });
+  board.forEach(() => {
+    const square = document.createElement('div');
+    square.className = 'square';
+    squares.appendChild(square);
   })
 
-  return { spaces, displayMarkers, displayPlayerTurn }
+  // add event listeners on each square
+  Array.from(squares.children).forEach((square, index) => {
+    square.addEventListener('click', () => {
+      // display active player marker
+      square.textContent = game.activePlayer.marker;
+      square.setAttribute('data', game.activePlayer.marker);
+      // update array value to be that of active player
+      board[index] = game.activePlayer.marker;
+      // remove event listener from the marked index
+      square.style.pointerEvents = 'none';
+      // update remaining spots
+      game.remainingSpots -= 1;
+      // check winner
+      game.checkWinner();
+      //check remaining spots
+      if (game.winnerDeclared === false) {
+        if (game.remainingSpots > 0) {
+          game.alertNextPlayer();
+          game.nextPlayer();
+        } else if (game.remainingSpots === 0) {
+          game.declareTie();
+        }
+      }
+    })
+  })
+  return { board }
 })();
 
-
-
-
-
+// game object
 const game = (() => {
+  const playerOne = createPlayer('Player 1', 'X');
+  const playerTwo = createPlayer('Player 2', 'O');
 
-  const checkWinStatus = () => {
-    //loop over board array, if win conditions exist, announce winner
-    const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]]
-    const board = gameBoard.board;
-    const isFull = board.every(cell => cell.length === 1)
+  // initialize
+  let activePlayer = playerOne;
+  let winnerDeclared = false;
+  let remainingSpots = 9;
 
-    for (let i = 0; i < winConditions.length; i++) {
-      if (board[winConditions[i][0]].includes('X') && board[winConditions[i][0]] === 'X' && board[winConditions[i][1]] === 'X' && board[winConditions[i][2]] === 'X') {
-        // suspend game once player 'X' wins
-        gameOver(player1);
-        console.log('x wins');
-        return
+  // selectors
+  let subText = document.querySelector('.subtext');
+  let playerName = document.querySelector('.player-name');
+
+  // winning conditions
+  const winningAxes = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  // check winner
+  function checkWinner() {
+    winningAxes.forEach((item, index) => {
+      if (gameBoard.board[item[0]] === this.activePlayer.marker && gameBoard.board[item[1]] === this.activePlayer.marker && gameBoard.board[item[2]] === this.activePlayer.marker) {
+        console.log('winner');
+        subText.textContent = `${this.activePlayer.name} wins!`;
+        this.winnerDeclared = true;
       }
-      if (board[winConditions[i][0]].includes('O') && board[winConditions[i][0]] === 'O' && board[winConditions[i][1]] === 'O' && board[winConditions[i][2]] === 'O') {
-        // suspend game once player 'O' wins
-        gameOver(player2);
-        console.log('o wins');
-        return
-      }
-      if (isFull) {
-        return console.log('draw');
-      }
-    }
-  }
-
-  const gameOver = () => {
-    console.log(`${player.name} wins!`);
-
-    displayController.spaces.forEach(element => {
-      element.removeEventListener('click', displayListener)
     })
   }
 
-  let player = player1;
-
-  const displayListener = (e) => {
-    // add player marker to gameBoard array based on element's index
-    let index = Array.from(displayController.spaces).indexOf(e.target);
-
-    if (gameBoard.board[index] === '') {
-      gameBoard.board[index] = player.marker;
-      displayController.displayMarkers();
-      checkWinStatus(); // load markers
-      player === player1 ? player = player2 : player = player1; // change players
-      displayController.displayPlayerTurn(player)
-    } else return
+  // alert next player
+  function alertNextPlayer() {
+    this.activePlayer === playerOne ? playerName.textContent = 'Player 2' : playerName.textContent = 'Player 1';
   }
 
+  // next player
+  function nextPlayer() {
+    this.activePlayer === playerOne ? this.activePlayer = playerTwo : this.activePlayer = playerOne;
+    console.log('nextPlayer() ran');
+    console.log('active player: ' + activePlayer.name);
+  }
 
+  // declare tie
+  const declareTie = () => {
+    subText.textContent = 'Tie game!';
+  }
 
-  displayController.spaces.forEach(element => {
-    element.addEventListener('click', displayListener)
-  });
-  return { player, displayListener }
-})()
+  return {
+    activePlayer,
+    remainingSpots,
+    checkWinner,
+    alertNextPlayer,
+    nextPlayer,
+    declareTie,
+    winnerDeclared,
+  }
+})();

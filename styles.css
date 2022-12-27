@@ -1,19 +1,38 @@
 body {
   box-sizing: border-box;
+  max-height: 100vh;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .board {
-  width: 300px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  position: relative;
+  background-color: rgb(255, 255, 255);
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 6px;
+  background-color: purple;
 }
 
-.space {
+.squares {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 1rem;
   display: grid;
-  place-items: center;
-  height: 100px;
-  width: 100px;
-  border-color: white;
-  background-color: pink;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+  border-radius: 6px;
+  background-color: purple;
+}
+
+.square {
+  display: grid;
+  place-content: center;
+  position: relative;
+  background-color: white;
+
 }
